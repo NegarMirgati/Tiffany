@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+
+# Define here the models for your scraped items
+#
+# See documentation in:
+# https://docs.scrapy.org/en/latest/topics/items.html
+
+
+import scrapy
+
+class GoodreadsItem(scrapy.Item):
+    name = scrapy.Field()
+    average_rating = scrapy.Field()
+    reviews = scrapy.Field()
+    num_of_raters = scrapy.Field()
+    rating_distribution = scrapy.Field()
+    pass
+
+class winnerItem(scrapy.Item):
+    id = scrapy.Field()
+    name = scrapy.Field()
+    category = scrapy.Field()
+    award = scrapy.Field()
+    pass
+    
+class GoodreadsItemWithEdition(scrapy.Item):
+    name = scrapy.Field()
+    average_rating = scrapy.Field()
+    reviews = scrapy.Field()
+    edition_language = scrapy.Field()
+    pass
+
+class BookEditionItem(scrapy.Item):
+    name = scrapy.Field()
+    original_name = scrapy.Field()
+    averageRating = scrapy.Field()
+    numOfRaters = scrapy.Field()
+    language = scrapy.Field()
+    pass
+
+class BookEditionsItem(scrapy.Item):
+    name = scrapy.Field()
+    urls = scrapy.Field()
+    pass
+
+class ListItem(scrapy.Item):
+    name = scrapy.Field()
+    bookUrls = scrapy.Field()
+    pass
+
+class BookListEditions(scrapy.Item):
+    dic = scrapy.Field()
