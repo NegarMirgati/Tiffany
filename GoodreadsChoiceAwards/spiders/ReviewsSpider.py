@@ -23,9 +23,6 @@ class WinnersSpider(scrapy.Spider):
         u = urlparse(response.request.url).path
         award = os.path.split(u)[1]
         book = winnerItem()
-        
-        print(response.xpath('//*[@class="wtrRight wtrUp"]//*[@id="book_id"]/@value').extract())
-  
         for div in response.xpath('.//*[@id="categories"]/div[@class="categoryContainer"]/div[@class="category clearFix"]'):
             book['id'] = div.xpath('.//*[@class="wtrRight wtrUp"]//*[@id="book_id"]/@value').extract_first()
             book['name'] = div.xpath('.//a/div/img/@alt').extract_first()
