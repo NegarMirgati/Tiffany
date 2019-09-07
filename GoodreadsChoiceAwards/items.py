@@ -11,6 +11,7 @@ import scrapy
 class GoodreadsItem(scrapy.Item):
     name = scrapy.Field()
     average_rating = scrapy.Field()
+    author = scrapy.Field()
     reviews = scrapy.Field()
     num_of_raters = scrapy.Field()
     rating_distribution = scrapy.Field()
