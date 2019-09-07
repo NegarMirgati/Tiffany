@@ -7,8 +7,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 import json
 import time
-from goodreads.items import GoodreadsItem
-from goodreads.utils import convert_to_rating_stars
+from .goodreads.items import GoodreadsItem
+from .ReviewsSpider import convert_to_rating_stars
+from webdriver_manager.chrome import ChromeDriverManager
 
 class DateReviewsSpider(scrapy.Spider):
     name = "date_review"
@@ -19,7 +20,7 @@ class DateReviewsSpider(scrapy.Spider):
     ]
 
     def __init__(self):
-        self.driver = webdriver.Chrome(executable_path = '/usr/local/bin/chromedriver')
+        self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
 
     def parse(self, response):
         wait = WebDriverWait(self.driver, 10)

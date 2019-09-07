@@ -29,3 +29,11 @@ class WinnersSpider(scrapy.Spider):
             book['category'] = div.xpath('.//a/h4/text()').extract_first().rstrip().replace('\n', '')
             book['award'] =  award
             yield book
+def convert_to_rating_stars( string):
+        return {
+            'it was amazing': 5,
+            'really liked it': 4,
+            'liked it': 3,
+            'it was ok': 2,
+            'did not like it': 1
+        }[string]
