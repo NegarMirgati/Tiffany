@@ -7,33 +7,32 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 import json
 import time
-from goodreads.items import GoodreadsItem
-from goodreads.utils import convert_to_rating_stars
+from GoodreadsChoiceAwards.items import GoodreadsItem
+from GoodreadsChoiceAwards.utils import convert_to_rating_stars
 
 class DateReviewsSpider(scrapy.Spider):
     name = "date_review"
     signed_in = False
     
     start_urls = [
-        'https://www.goodreads.com/book/show/22628.The_Perks_of_Being_a_Wallflower'
+        'https://www.goodreads.com/book/show/29056083-harry-potter-and-the-cursed-child?ac=1&from_search=true'
     ]
 
     def __init__(self):
         self.driver = webdriver.Chrome(executable_path = '/usr/local/bin/chromedriver')
+        self.sign_in()
 
     def parse(self, response):
         wait = WebDriverWait(self.driver, 10)
         book = GoodreadsItem()
         
-        self.sign_in()
         self.driver.get(response.url)
             
         book['name'] = self.driver.find_element_by_css_selector('#bookTitle').text.strip()
-        # book['average_rating'] = float(self.driver.find_element_by_css_selector('span.value span.average').text)
+        book['author'] = response.xpath('//*[@id="bookAuthors"]/span[@itemprop="author"]/div[@class="authorName__container"]/a[@class="authorName"]/span/text()').extract()
+        book['average_rating'] = float(self.driver.find_element_by_xpath('//*[@id="bookMeta"]/span[@itemprop="ratingValue"]').text)
         book['reviews'] = []
         
-        index = 5
-        self.sort_by_stars(index)
         time.sleep(5)
         
         while True:
@@ -41,28 +40,29 @@ class DateReviewsSpider(scrapy.Spider):
             reviews = self.driver.find_elements_by_css_selector('div#bookReviews div.review')
             for review in reviews:
                 if len(review.find_elements_by_css_selector('span.staticStars')) != 0:
-                    book['reviews'].append({
-                        'reviewer': review.find_element_by_css_selector('a.user').get_attribute('href'),
-                        'rating': convert_to_rating_stars(review.find_element_by_css_selector('span.staticStars').get_attribute('title')),
-                        'date': datetime.datetime.strptime(review.find_element_by_css_selector('a.reviewDate').text.replace(',', ''), "%b %d %Y").date()
+                    try:
+                        book['reviews'].append({
+                            'rating': convert_to_rating_stars(review.find_element_by_css_selector('span.staticStars').get_attribute('title')),
+                            'date': datetime.datetime.strptime(review.find_element_by_css_selector('a.reviewDate').text.replace(',', ''), "%b %d %Y").date()
                     })
+                    except:
+                        print("ERR")
+
 
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page']")
             if len(next_page) == 0:
+                print("break")
                 break
-                print("no next")
-                if index == 5:
-                    break
-                index += 1
-                self.sort_by_stars_again(index)
-                continue
+
+            next_page = self.driver.find_elements_by_xpath("//a[@class='next_page disabled']")
+            if len(next_page) != 0:
+                print("break")
+                break
+
             elif len(self.driver.find_elements_by_xpath("//*[@rel='next']")) == 0:
                 print("no next again")
-                if index == 5:
-                    break
-                index += 1
-                self.sort_by_stars_again(index)
-                continue
+                break
+
             element = self.driver.find_element_by_xpath("//a[@class='next_page']")
             actions = ActionChains(self.driver)
             time.sleep(2.5)
@@ -75,55 +75,9 @@ class DateReviewsSpider(scrapy.Spider):
         if not self.signed_in:
             self.driver.get('https://www.goodreads.com/')
             username = self.driver.find_element_by_id('userSignInFormEmail');
-            username.send_keys('nsh.nightingale@yahoo.com')
+            username.send_keys('SCooperCaltech80@gmail.com')
             password = self.driver.find_element_by_id('user_password')
-            password.send_keys("Fytvig-sejmi0-xirbyk")
-        
+            password.send_keys("bazingapunk")
+
             self.driver.find_element_by_xpath("//input[@type='submit']").click()
             self.signed_in = True
-            
-    def sort_by_date(self):
-        wait = WebDriverWait(self.driver, 10)
-        hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[id^='span_class_gr-hyperlink_sort_span']")))
-        # hover_element = self.driver.find_element_by_css_selector("[id^='span_class_gr-hyperlink_filter_span']")
-        # hover_element = self.driver.find_elements_by_css_selector('div.reviewControls--right a.uitext')[1]
-        builder = ActionChains(self.driver)
-        builder.move_to_element(hover_element).perform()
-        time.sleep(2.5)
-        locator = self.driver.find_element_by_xpath("//span[@class='reviewControls__sortOrders']/span[@class='loadingLinkSpan'][3]")
-        builder.move_to_element(locator)
-        builder.click().perform()
-        time.sleep(2.5)
-        # data[0]['reviews'].sort(key = lambda r: r['date'])
-        
-    def sort_by_stars(self, stars):        
-        wait = WebDriverWait(self.driver, 10)
-        hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[id^='span_class_gr-hyperlink_filter_span']")))
-        builder = ActionChains(self.driver)
-        builder.move_to_element(hover_element).perform()
-        time.sleep(2.5)
-        locator = self.driver.find_elements_by_css_selector("div.content div.greyText span.loadingLinkSpan")
-        print(len(locator))
-        builder.move_to_element(locator[stars])
-        builder.click().perform()
-        time.sleep(2.5)
-        
-    def sort_by_stars_again(self, stars):        
-        wait = WebDriverWait(self.driver, 10)
-        builder = ActionChains(self.driver)
-        hover_element = self.driver.find_elements_by_css_selector("[id^='span_class_gr-hyperlink_filter_span']")
-        print(len(hover_element))
-        # self.driver.execute_script("window.scrollTo(0, 700)")
-        builder.move_to_element(self.driver.find_element_by_xpath("//div[@class='footerContainer']")).perform()
-        time.sleep(2.5)
-        
-        builder.move_to_element(hover_element[0]).perform()
-        # builder.click().perform()
-        time.sleep(2.5)
-        
-        print('hey1')
-        locator = self.driver.find_elements_by_css_selector("div.tooltip div.content div.greyText span.loadingLinkSpan")
-        print(len(locator))
-        builder.move_to_element(locator[stars+6*(stars-1)])
-        builder.click().perform()
-        time.sleep(5)
