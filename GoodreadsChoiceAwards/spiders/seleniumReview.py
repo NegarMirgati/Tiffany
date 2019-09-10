@@ -13,6 +13,7 @@ import time
 from GoodreadsChoiceAwards.items import GoodreadsItem
 from GoodreadsChoiceAwards.utils import convert_to_rating_stars
 
+
 class DateReviewsSpider(scrapy.Spider):
     name = "date_review"
     signed_in = False
@@ -24,11 +25,14 @@ class DateReviewsSpider(scrapy.Spider):
                     url = book['url']
                     book_url = urljoin("https://www.goodreads.com", url)
                     urls.append(book_url)
-    #start_urls = urls
+
     start_urls = urls
 
     def __init__(self):
-        self.driver = webdriver.Chrome(executable_path = '/usr/local/bin/chromedriver')
+        chrome_options = webdriver.ChromeOptions()
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        chrome_options.add_experimental_option("prefs", prefs)
+        self.driver = webdriver.Chrome(chrome_options=chrome_options, executable_path = '/usr/local/bin/chromedriver')
         self.sign_in()
 
     def parse(self, response):
