@@ -5,7 +5,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
+from urllib.parse import urljoin
+from urllib.parse import urlparse
 import json
+import os
 import time
 from GoodreadsChoiceAwards.items import GoodreadsItem
 from GoodreadsChoiceAwards.utils import convert_to_rating_stars
@@ -13,10 +16,16 @@ from GoodreadsChoiceAwards.utils import convert_to_rating_stars
 class DateReviewsSpider(scrapy.Spider):
     name = "date_review"
     signed_in = False
-    
-    start_urls = [
-        'https://www.goodreads.com/book/show/29056083-harry-potter-and-the-cursed-child?ac=1&from_search=true'
-    ]
+    urls = []
+    if os.path.exists('allBooks.json'):
+            with open('allBooks.json', 'r') as json_file:
+                data = json.load(json_file)
+                for book in data :
+                    url = book['url']
+                    book_url = urljoin("https://www.goodreads.com", url)
+                    urls.append(book_url)
+    #start_urls = urls
+    start_urls = urls
 
     def __init__(self):
         self.driver = webdriver.Chrome(executable_path = '/usr/local/bin/chromedriver')
@@ -27,7 +36,7 @@ class DateReviewsSpider(scrapy.Spider):
         book = GoodreadsItem()
         
         self.driver.get(response.url)
-            
+        book['url'] = response.request.url    
         book['name'] = self.driver.find_element_by_css_selector('#bookTitle').text.strip()
         book['author'] = response.xpath('//*[@id="bookAuthors"]/span[@itemprop="author"]/div[@class="authorName__container"]/a[@class="authorName"]/span/text()').extract()
         book['average_rating'] = float(self.driver.find_element_by_xpath('//*[@id="bookMeta"]/span[@itemprop="ratingValue"]').text)
@@ -39,14 +48,14 @@ class DateReviewsSpider(scrapy.Spider):
             self.driver.execute_script("window.scrollTo(0, 250)") 
             reviews = self.driver.find_elements_by_css_selector('div#bookReviews div.review')
             for review in reviews:
-                if len(review.find_elements_by_css_selector('span.staticStars')) != 0:
-                    try:
-                        book['reviews'].append({
-                            'rating': convert_to_rating_stars(review.find_element_by_css_selector('span.staticStars').get_attribute('title')),
-                            'date': datetime.datetime.strptime(review.find_element_by_css_selector('a.reviewDate').text.replace(',', ''), "%b %d %Y").date()
-                    })
-                    except:
-                        print("ERR")
+                try:
+                    if len(review.find_elements_by_css_selector('span.staticStars')) != 0:
+                            book['reviews'].append({
+                                'rating': convert_to_rating_stars(review.find_element_by_css_selector('span.staticStars').get_attribute('title')),
+                                'date': datetime.datetime.strptime(review.find_element_by_css_selector('a.reviewDate').text.replace(',', ''), "%b %d %Y").date()
+                        })
+                except:
+                    print("ERR")
 
 
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page']")

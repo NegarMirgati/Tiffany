@@ -15,10 +15,12 @@ class GoodreadsItem(scrapy.Item):
     reviews = scrapy.Field()
     num_of_raters = scrapy.Field()
     rating_distribution = scrapy.Field()
+    url = scrapy.Field()
     pass
 
-class winnerItem(scrapy.Item):
+class nomineeItem(scrapy.Item):
     id = scrapy.Field()
+    url = scrapy.Field()
     name = scrapy.Field()
     category = scrapy.Field()
     award = scrapy.Field()
