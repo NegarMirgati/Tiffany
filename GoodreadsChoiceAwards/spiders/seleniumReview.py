@@ -47,7 +47,10 @@ class DateReviewsSpider(scrapy.Spider):
         book['reviews'] = []
         
         time.sleep(5)
-        
+        num_of_stars = 5
+        self.filter_by_stars(num_of_stars)
+        time.sleep(5)
+
         while True:
             self.driver.execute_script("window.scrollTo(0, 250)") 
             reviews = self.driver.find_elements_by_css_selector('div#bookReviews div.review')
@@ -65,16 +68,28 @@ class DateReviewsSpider(scrapy.Spider):
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page']")
             if len(next_page) == 0:
                 print("break")
-                break
+                if num_of_stars == 1:
+                    break
+                num_of_stars -= 1
+                self.filter_by_stars(num_of_stars)
+                continue
 
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page disabled']")
             if len(next_page) != 0:
-                print("break")
-                break
+                print("no next")
+                if num_of_stars == 1:
+                    break
+                num_of_stars -= 1
+                self.filter_by_stars(num_of_stars)
+                continue
 
             elif len(self.driver.find_elements_by_xpath("//*[@rel='next']")) == 0:
                 print("no next again")
-                break
+                if num_of_stars == 1:
+                    break
+                num_of_stars -= 1
+                self.filter_by_stars(num_of_stars)
+                continue
 
             element = self.driver.find_element_by_xpath("//a[@class='next_page']")
             actions = ActionChains(self.driver)
@@ -91,6 +106,16 @@ class DateReviewsSpider(scrapy.Spider):
             username.send_keys('SCooperCaltech80@gmail.com')
             password = self.driver.find_element_by_id('user_password')
             password.send_keys("bazingapunk")
-
             self.driver.find_element_by_xpath("//input[@type='submit']").click()
             self.signed_in = True
+    
+    def filter_by_stars(self, stars):        
+        wait = WebDriverWait(self.driver, 10)
+        hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[id^='span_class_gr-hyperlink_more_filters_span_tip_']")))
+        builder = ActionChains(self.driver)
+        builder.move_to_element(hover_element).perform()
+        time.sleep(2.5)
+        locator = self.driver.find_elements_by_css_selector("div.content div.greyText span.loadingLinkSpan")
+        builder.move_to_element(locator[5 - stars + 1])
+        builder.click().perform()
+        time.sleep(2.5)
