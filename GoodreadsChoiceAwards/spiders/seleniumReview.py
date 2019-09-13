@@ -7,8 +7,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 import json
 import time
+<<<<<<< Updated upstream
 from .goodreads.items import GoodreadsItem
 from .ReviewsSpider import convert_to_rating_stars
+=======
+from GoodreadsChoiceAwards.items import GoodreadsItem
+from GoodreadsChoiceAwards.utils import convert_to_rating_stars
+>>>>>>> Stashed changes
 from webdriver_manager.chrome import ChromeDriverManager
 
 class DateReviewsSpider(scrapy.Spider):
@@ -20,7 +25,16 @@ class DateReviewsSpider(scrapy.Spider):
     ]
 
     def __init__(self):
+<<<<<<< Updated upstream
         self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+=======
+        chrome_options = webdriver.ChromeOptions()
+        prefs = {"profile.managed_default_content_settings.images": 2}
+        chrome_options.add_experimental_option("prefs", prefs)
+        self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
+        # self.driver = webdriver.Chrome(chrome_options=chrome_options, executable_path = '/usr/local/bin/chromedriver')
+        self.sign_in()
+>>>>>>> Stashed changes
 
     def parse(self, response):
         wait = WebDriverWait(self.driver, 10)
