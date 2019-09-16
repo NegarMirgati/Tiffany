@@ -32,6 +32,7 @@ class DateReviewsSpider(scrapy.Spider):
         chrome_options = webdriver.ChromeOptions()
         prefs = {"profile.managed_default_content_settings.images": 2}
         chrome_options.add_experimental_option("prefs", prefs)
+        chrome_options.add_argument("--kiosk")
         self.driver = webdriver.Chrome(chrome_options=chrome_options, executable_path = '/usr/local/bin/chromedriver')
         self.sign_in()
 
@@ -48,7 +49,7 @@ class DateReviewsSpider(scrapy.Spider):
         
         time.sleep(5)
         num_of_stars = 5
-        self.filter_by_stars(num_of_stars)
+        self.filter_by_stars()
         time.sleep(5)
 
         while True:
@@ -66,30 +67,18 @@ class DateReviewsSpider(scrapy.Spider):
 
 
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page']")
+            
             if len(next_page) == 0:
                 print("break")
-                if num_of_stars == 1:
-                    break
-                num_of_stars -= 1
-                self.filter_by_stars(num_of_stars)
-                continue
+                break
 
             next_page = self.driver.find_elements_by_xpath("//a[@class='next_page disabled']")
             if len(next_page) != 0:
-                print("no next")
-                if num_of_stars == 1:
-                    break
-                num_of_stars -= 1
-                self.filter_by_stars(num_of_stars)
-                continue
+                break
 
             elif len(self.driver.find_elements_by_xpath("//*[@rel='next']")) == 0:
-                print("no next again")
-                if num_of_stars == 1:
-                    break
-                num_of_stars -= 1
-                self.filter_by_stars(num_of_stars)
-                continue
+                print("break")
+                break
 
             element = self.driver.find_element_by_xpath("//a[@class='next_page']")
             actions = ActionChains(self.driver)
@@ -109,13 +98,17 @@ class DateReviewsSpider(scrapy.Spider):
             self.driver.find_element_by_xpath("//input[@type='submit']").click()
             self.signed_in = True
     
-    def filter_by_stars(self, stars):        
+    def filter_by_stars(self):        
         wait = WebDriverWait(self.driver, 10)
-        hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[id^='span_class_gr-hyperlink_more_filters_span_tip_']")))
+        hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "[id^='span_class_gr-hyperlink_sort_order_span_tip_']")))
+        # hover_element = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, " div.reviews div.reviewControls--left span.gr-hyperlink")))
         builder = ActionChains(self.driver)
         builder.move_to_element(hover_element).perform()
+        # hover_element.click()
         time.sleep(2.5)
-        locator = self.driver.find_elements_by_css_selector("div.content div.greyText span.loadingLinkSpan")
-        builder.move_to_element(locator[5 - stars + 1])
+        locator = self.driver.find_elements_by_css_selector("div.tooltip.goodreads div.content.clearfix span.reviewControls__sortOrders span.loadingLinkSpan")
+        print(len(locator))
+        builder.move_to_element(locator[2])
         builder.click().perform()
         time.sleep(2.5)
+
