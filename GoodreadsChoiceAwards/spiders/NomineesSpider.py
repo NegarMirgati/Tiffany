@@ -3,7 +3,7 @@ from urllib.parse import urljoin
 from urllib.parse import urlparse
 import re
 import os.path
-from GoodreadsChoiceAwards.items import winnerItem
+from GoodreadsChoiceAwards.items import nomineeItem
 
 class NomineeSpider(scrapy.Spider):
     name = "nominees"
@@ -33,12 +33,13 @@ class NomineeSpider(scrapy.Spider):
     
     def parse_category(self, response):
         title = response.xpath('.//title/text()').extract_first()
-        book = winnerItem()
+        book = nomineeItem()
         for div in response.xpath('.//*[@class="pollContents"]/div[@class="inlineblock pollAnswer resultShown"]'):
             url = div.xpath('.//a[@class="pollAnswer__bookLink"]/@href').extract_first()
             name = div.xpath('.//a[@class="pollAnswer__bookLink"]/img/@alt').extract_first()
             id = div.xpath('.//*[@id="book_id"]/@value').extract_first()
             book['name'] = name
+            book['url'] = url
             book['id'] = id
             book['category'] = response.meta['category']
             book['award'] = response.meta['award']
