@@ -8,15 +8,15 @@ from GoodreadsChoiceAwards.items import nomineeItem
 class NomineeSpider(scrapy.Spider):
     name = "nominees"
     start_urls = [
-        # 'https://www.goodreads.com/choiceawards/best-books-2009',
+        'https://www.goodreads.com/choiceawards/best-books-2009',
         'https://www.goodreads.com/choiceawards/best-books-2010',
-        # 'https://www.goodreads.com/choiceawards/best-books-2011',
+        'https://www.goodreads.com/choiceawards/best-books-2011',
         'https://www.goodreads.com/choiceawards/best-books-2012',
-        # 'https://www.goodreads.com/choiceawards/best-books-2013',
+        'https://www.goodreads.com/choiceawards/best-books-2013',
         'https://www.goodreads.com/choiceawards/best-books-2014',
-        # 'https://www.goodreads.com/choiceawards/best-books-2015',
+        'https://www.goodreads.com/choiceawards/best-books-2015',
         'https://www.goodreads.com/choiceawards/best-books-2016',
-        # 'https://www.goodreads.com/choiceawards/best-books-2017',
+        'https://www.goodreads.com/choiceawards/best-books-2017',
         'https://www.goodreads.com/choiceawards/best-books-2018'
         
     ]
