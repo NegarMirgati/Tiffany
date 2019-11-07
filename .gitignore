@@ -247,4 +247,9 @@ dmypy.json
 # Ignore all local history of files
 .history
 
+### custom ###
+data/
+mona/
+my_data/
+Final Data/
 # End of https://www.gitignore.io/api/macos,python,pycharm,visualstudiocode
