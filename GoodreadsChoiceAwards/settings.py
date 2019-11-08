@@ -14,6 +14,8 @@ BOT_NAME = 'GoodreadsChoiceAwards'
 SPIDER_MODULES = ['GoodreadsChoiceAwards.spiders']
 NEWSPIDER_MODULE = 'GoodreadsChoiceAwards.spiders'
 
+LOG_LEVEL = 'INFO'
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'GoodreadsChoiceAwards (+http://www.yourdomain.com)'
