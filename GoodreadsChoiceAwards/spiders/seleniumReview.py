@@ -44,6 +44,7 @@ class DateReviewsSpider(scrapy.Spider):
 					urls.append(book_url)
 	urls = cheakurls(urls,'reviews2.json')
 	urls = cheakurls(urls,'review3.json')
+	urls = cheakurls(urls,'reviews4.json')
 	start_urls = urls
 	print(len(urls))
 
