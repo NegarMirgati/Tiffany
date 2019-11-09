@@ -23,13 +23,27 @@ class dataTransformer(object):
                 self.award_dates[key] = row[1:]
 
     def extract_winners(self):
+        count = 0
         with open('winners.json') as json_file:
             data = json.load(json_file)
             for d in data:
-                self.winners[d['name']] = None
+                name = d['name']
+                count = count + 1
+                category = d['category']
+                tkns = d['award'].split("-")
+                year = tkns[2]
+                if name in self.winners:
+                    self.winners[name].append({'year' : year, 'category' : category})
+                    print(name)
+                    print('HERE')
+                else :
+                    self.winners[name] = [{'year' : year, 'category' : category}]
+                    
+            print(len(self.winners))
+            print(self.winners)
             
     def create_csv(self):
-        with open('goodreads_output.csv', mode='w') as employee_file:
+        with open('goodreads_outputtt.csv', mode='w') as employee_file:
             output_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             output_writer.writerow(['year', 'name', 'writer', 'category', 'winner', 'num 1 stars', 'num 2 stars', 'num 3 stars', 'num 4 stars', 'num 5 stars', 'average rating'])
             for subdir, dirs, files in os.walk(self.rootdir):
@@ -39,7 +53,7 @@ class dataTransformer(object):
                             data = json.load(json_file)
                             category = os.path.splitext(file)[0]
                             path = os.path.normpath(subdir)
-                            year = (path.split(os.sep))[3]
+                            year = (path.split(os.sep))[2]
                             for d in data : 
                                 name = d['name']
                                 author = d['author']
@@ -49,7 +63,7 @@ class dataTransformer(object):
                                     if(self.reviewed_before_contest(year, review_date_str)):
                                         self.calc_star_nums(review, num_stars)
                                 average = self.calc_average(num_stars)
-                                output_writer.writerow([year, name, author, category, self.is_winner(name), num_stars[0], num_stars[1], num_stars[2], num_stars[3], num_stars[4], average])
+                                output_writer.writerow([year, name, author, category, self.is_winner(name, category, year), num_stars[0], num_stars[1], num_stars[2], num_stars[3], num_stars[4], average])
             print(self.winners_found)
     
     def reviewed_before_contest(self, contest_year, review_date_str):
@@ -72,13 +86,16 @@ class dataTransformer(object):
             denum = denum + num_stars[i - 1]
         return sum/denum
     
-    def is_winner(self, name):
+    def is_winner(self, name, category, year):
         if name in self.winners:
-            print("THIS IS A WINNNNNNERRRRR")
-            self.winners_found += 1
-            return 1
-        else :
-            return 0
+            for elem in self.winners[name]:
+                winner_cat =  elem['category']
+                winner_year = elem['year']
+                if(category == winner_cat and year == winner_year):
+                    self.winners_found += 1
+                    #print('FOUND   :   ', name, category, year)
+                    return 1
+        return 0
 
 
 def main():
