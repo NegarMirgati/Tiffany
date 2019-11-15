@@ -24,7 +24,7 @@ class dataTransformer(object):
 
     def extract_winners(self):
         count = 0
-        with open('winners_new.json') as json_file:
+        with open('winners.json') as json_file:
             data = json.load(json_file)
             for d in data:
                 name = 'https://www.goodreads.com' + d['url']
@@ -37,8 +37,6 @@ class dataTransformer(object):
                 else :
                     self.winners[name] = [{'year' : year, 'category' : category}]
                     
-            print(len(self.winners))
-            print((self.winners))
             
     def create_csv(self):
         with open('goodreads_output.csv', mode='w') as employee_file:
@@ -95,9 +93,6 @@ class dataTransformer(object):
                 if(category == winner_cat and year == winner_year):
                     self.winners_found.append(elem)
                     return 1
-                else :
-                    print(winner_cat, 'vs', category)
-                    print(winner_year, 'vs', year)
         return 0
 
 
