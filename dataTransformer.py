@@ -1,3 +1,4 @@
+from __future__ import division
 import csv
 import json
 import datetime
@@ -8,6 +9,7 @@ class dataTransformer(object):
     award_dates = {}
     winners = {}
     winners_found = []
+    test_year = 2019
     rootdir = 'mona/data1'
     def import_award_dates(self):
         with open('AwardDates.csv', mode='r') as infile:
@@ -60,10 +62,11 @@ class dataTransformer(object):
                                     if(self.reviewed_before_contest(year, review_date_str)):
                                         self.calc_star_nums(review, num_stars)
                                 average = self.calc_average(num_stars)
+                                self.normalize(num_stars)
                                 output_writer.writerow([year, name, author, category, self.is_winner(url, category, year), num_stars[0], num_stars[1], num_stars[2], num_stars[3], num_stars[4], average])
-            # with open('your_file.txt', 'w') as f:
-            #     for item in self.winners_found:
-            #         f.write("%s\n" % item)
+            with open('your_file.txt', 'w') as f:
+                for item in self.winners_found:
+                    f.write("%s\n" % item)
     
     def reviewed_before_contest(self, contest_year, review_date_str):
         winners_announced = self.award_dates[contest_year][3]
@@ -85,6 +88,10 @@ class dataTransformer(object):
             denum = denum + num_stars[i - 1]
         return sum/denum
     
+    def normalize(self, num_stars):
+        sum_reviews = sum(x for x in num_stars)
+        num_stars[:] = [x / sum_reviews for x in num_stars]
+        
     def is_winner(self, url, category, year):
         if url in self.winners:
             for elem in self.winners[url]:
