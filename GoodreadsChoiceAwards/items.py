@@ -51,5 +51,14 @@ class ListItem(scrapy.Item):
     bookUrls = scrapy.Field()
     pass
 
+class WriterItem(scrapy.Item):
+    name = scrapy.Field()
+    url = scrapy.Field()
+    average_rating = scrapy.Field()
+    num_reviews = scrapy.Field()
+    num_ratings = scrapy.Field()
+    book_url =  scrapy.Field()
+    pass
+
 class BookListEditions(scrapy.Item):
     dic = scrapy.Field()
