@@ -63,6 +63,11 @@ def add_write_field(data,year):
 				data['num_ratings'] = data_w['num_ratings']
 				data['num_reviews'] = data_w['num_reviews']
 				num_rating = int(data_w['num_ratings'])
+		if num_rating == 0:
+			data['average_rating_w'] = None
+			data['num_ratings'] = None
+			data['num_reviews'] = None
+
 
 
 
