@@ -1,14 +1,14 @@
 import json
+import copy
 import os
 from urllib.parse import urljoin
 
 category = []
 fix = "/Users/md/Desktop/collage/goodreads/task2/"
 site = "https://www.goodreads.com"
-datafile = ["reviews.json","oldreviews.json", "oldreviews2.json", "oldreview3.json", "oldreviews4.json",
-            "2013_remained.json", "reviews_extra_2011.json","reviews_extra_2012.json","reviews_extra_2014.json",
-            "reviews_extra_2015.json","2013_jome.json","2015_jome.json","2012_jome.json","2014_jome.json"]
 years = list(range(2011, 2019))
+datafile = [str(year)+'review.json' for year in years]
+
 # years = [2018]
 
 
@@ -49,7 +49,7 @@ def get_json_data(filenames, url, category, datalist,fackList,year):
 		for data_ in json.load(reviewjson):
 			for urlcategory in url:
 				if data_['url'] == urlcategory['url'] and category == urlcategory['category'] and data_ not in fackList:
-					fackList.append(data_)
+					fackList.append(copy.deepcopy( data_))
 					add_write_field(data_,year)
 					datalist.append(data_)
 
