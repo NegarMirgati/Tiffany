@@ -59,11 +59,12 @@ class WriterItem(scrapy.Item):
     num_ratings = scrapy.Field()
     book_url =  scrapy.Field()
     pass
-    
+
 class BookDateItem(scrapy.Item):
     name = scrapy.Field()
     url = scrapy.Field()
     date = scrapy.Field()
+    isbn = scrapy.Field()
     pass
     
 class BookListEditions(scrapy.Item):
