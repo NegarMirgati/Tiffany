@@ -252,4 +252,5 @@ data/
 mona/
 my_data/
 Final Data/
+cleaner.py
 # End of https://www.gitignore.io/api/macos,python,pycharm,visualstudiocode

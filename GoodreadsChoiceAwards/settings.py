@@ -14,7 +14,7 @@ BOT_NAME = 'GoodreadsChoiceAwards'
 SPIDER_MODULES = ['GoodreadsChoiceAwards.spiders']
 NEWSPIDER_MODULE = 'GoodreadsChoiceAwards.spiders'
 
-LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'DEBUG'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -37,7 +37,7 @@ CONCURRENT_REQUESTS = 32
 # Disable cookies (enabled by default)
 #COOKIES_ENABLED = False
 
-LOG_ENABLED = False
+LOG_ENABLED = True
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 
