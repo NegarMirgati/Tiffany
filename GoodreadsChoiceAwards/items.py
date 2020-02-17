@@ -65,6 +65,8 @@ class BookDateItem(scrapy.Item):
     url = scrapy.Field()
     date = scrapy.Field()
     isbn = scrapy.Field()
+    year = scrapy.Field()
+    author = scrapy.Field()
     pass
     
 class BookListEditions(scrapy.Item):
