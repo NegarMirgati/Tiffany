@@ -46,7 +46,7 @@ class dataTransformer(object):
             output_writer = csv.writer(employee_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
             output_writer.writerow(
                 ['year', 'name', 'writer', 'category', 'winner', 'num 1 stars', 'num 2 stars', 'num 3 stars',
-                 'num 4 stars', 'num 5 stars', 'average rating','average_rating_w','num_ratings','num_reviews'])
+                 'num 4 stars', 'num 5 stars', 'average rating','average_rating_w','num_ratings','num_reviews','url'])
             for subdir, dirs, files in os.walk(self.rootdir):
                 for file in files:
                     if not file.startswith('.'):
@@ -68,10 +68,7 @@ class dataTransformer(object):
                                 output_writer.writerow(
                                     [year, name, author, category, self.is_winner(url, category, year), num_stars[0],
                                      num_stars[1], num_stars[2], num_stars[3], num_stars[4], average,
-                                     d['average_rating_w'],d['num_ratings'],d['num_reviews']])
-            with open('your_file.txt', 'w') as f:
-                for item in self.winners_found:
-                    f.write("%s\n" % item)
+                                     d['average_rating_w'],d['num_ratings'],d['num_reviews'],d['url']])
 
     def reviewed_before_contest(self, contest_year, review_date_str):
         winners_announced = self.award_dates[contest_year][3]
