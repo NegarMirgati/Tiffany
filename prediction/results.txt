@@ -1,0 +1,19 @@
+pram_train = ['category', 'num 5 stars', 'average_rating_w', 'num_ratings', 'num_reviews', 'daystocom', 'listnames', 'numWeeks','bestRank']:
+	trianing with mona:
+		only 2019:
+			not 100: 15,4,17,21,3,
+			100: 8,2,19,6,
+		only 2018:
+			not 100:7,10,12,
+			100:8,14,4,10,15,
+		2019&&2018:
+			not 100:10,15,13,17,0,12
+			100:8,14,
+	trianing with mona1:
+		only 2019:
+			not 100:17,6,
+			100:10,8,
+		only 2018:
+			not 100:10,14,
+			100:8,
+
