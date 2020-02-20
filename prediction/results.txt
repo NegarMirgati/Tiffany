@@ -16,4 +16,7 @@ pram_train = ['category', 'num 5 stars', 'average_rating_w', 'num_ratings', 'num
 		only 2018:
 			not 100:10,14,
 			100:8,
+		2019&&2018:
+			not 100:8,
+			100:
 
