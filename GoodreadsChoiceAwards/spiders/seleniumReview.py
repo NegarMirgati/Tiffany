@@ -20,7 +20,7 @@ class DateReviewsSpider(scrapy.Spider):
 	urls = []
 	flag = 0
 	currentUrls = []
-	for subdir, dirs, files in os.walk('data1/2012'):
+	for subdir, dirs, files in os.walk('RAW DATA/2019'):
 		for file in files:
 			if not file.startswith('.'):
 				with open(os.path.join(subdir, file)) as json_file:
@@ -32,8 +32,8 @@ class DateReviewsSpider(scrapy.Spider):
 						currentUrls.append(d['url'])
 	print(len(currentUrls))
 
-	if os.path.exists('extra2012.json'):
-		with open('extra2012.json', 'r') as json_file:
+	if os.path.exists('2019.json'):
+		with open('2019.json', 'r') as json_file:
 				data = json.load(json_file)
 				for book in data :
 					url = book['url']

@@ -11,6 +11,7 @@ class NYTbooksDownloader(object):
         self.books_json_addr = '2019datesAndIsbn.json'
         self.books = {}
         self.current = {}
+        self.english = []
         self.current_key = 0
 
     def get_all_lists(self):
@@ -30,6 +31,16 @@ class NYTbooksDownloader(object):
                     self.books[isbn] = book['name']
                     url = book['url']
             print(self.books)
+    
+    def load_books_eng(self):
+        if os.path.exists('2019datesAndIsbn.json'):
+            with open('2019datesAndIsbn.json', 'r') as json_file:
+                data = json.load(json_file)
+                for book in data :
+                    if(book['isbn'] == "English"):
+                        self.english.append(book)
+                        print('HERE')
+            print(len(self.english))
      
     def extract_data_by_isbn(self):
         i = 0
@@ -67,35 +78,37 @@ class NYTbooksDownloader(object):
         i = 0
         data_dict = {}
         flag = False
-        with open('rems_cleaned.json', 'r') as json_file:
-            data = json.load(json_file)  
-            for d in data:
-                key = d['url']
-                value = d['name']
-                author = d['author']
-                flag = False
-                if(key not in data_dict):
-                    print(value)
-                    while(flag == False):
-                        sleep = 1
-                        data = self.process_history_request_name(value, author)
-                        if('fault' in data):
-                            print('FAULT')
-                            sleep = sleep * 2
-                            time.sleep(sleep)
-                            self.current_key = (self.current_key + 1) % 5
-                            continue
-                        elif ( data['status'] != 'OK'):
-                            print('OOOOOOPS')
-                        elif(data['status'] == 'OK'):
-                            data_dict[key] = data
-                            with open('res12.json', 'w') as outfile:
-                                json.dump(data_dict, outfile)
-                            i = i + 1
-                            print(i)
-                            flag = True
-                        else:
-                            print(data)
+        #with open('rems_cleaned.json', 'r') as json_file:
+            #data = json.load(json_file)  
+        for i in range(0, len(self.english)):
+            d = self.english[i]
+            print(i)
+            key = d['url']
+            value = d['name']
+            author = d['author']
+            flag = False
+            if(key not in data_dict):
+                print(value)
+                while(flag == False):
+                    sleep = 1
+                    data = self.process_history_request_name(value, author)
+                    if('fault' in data):
+                        print('FAULT')
+                        sleep = sleep * 2
+                        time.sleep(sleep)
+                        self.current_key = (self.current_key + 1) % 5
+                        continue
+                    elif ( data['status'] != 'OK'):
+                        print('OOOOOOPS')
+                    elif(data['status'] == 'OK'):
+                        data_dict[key] = data
+                        with open('res13.json', 'w') as outfile:
+                            json.dump(data_dict, outfile)
+                        i = i + 1
+                        print(i)
+                        flag = True
+                    else:
+                        print(data)
             
         with open('result.json', 'w') as fp:
             json.dump(data_dict, fp)
@@ -114,8 +127,8 @@ class NYTbooksDownloader(object):
 
 def main() :
     nytdl = NYTbooksDownloader()
-    nytdl.load_books()
-    nytdl.extract_data_by_isbn()
+    nytdl.load_books_eng()
+    nytdl.extract_data_by_name()
     
 
 if __name__== "__main__":
